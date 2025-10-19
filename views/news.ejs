@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsHive - Stay Updated</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 28px;
+            color: #fff !important;
+        }
+        .carousel img {
+            border-radius: 8px;
+        }
+        .carousel-caption {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .carousel-caption h3 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .carousel-caption p {
+            font-size: 16px;
+        }
+        .categories {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px auto;
+        }
+        .categories button {
+            padding: 8px 18px;
+            background: #e63946;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .categories button:hover {
+            background: #d90429;
+            transform: scale(1.05);
+        }
+        .news-container {
+            max-width: 1300px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .news-box {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: #000;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transition: 0.3s;
+            position: relative;
+        }
+        .news-box:hover {
+            transform: scale(1.03);
+        }
+        .news-box img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .news-box h3 {
+            margin: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .news-box p {
+            margin: 0 15px 15px;
+            font-size: 14px;
+            color: #555;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #1f1f1f;
+            color: #fff;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg fixed-top" style="background: linear-gradient(90deg,#e63946,#d90429);">
+    <a class="navbar-brand" href="/">NewsHive</a>
+    <form class="form-inline ml-auto" action="/search" method="POST">
+        <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search news..." style="border-radius:20px;">
+        <button class="btn btn-light" style="border-radius:20px;margin-left:5px;" type="submit">Search</button>
+    </form>
+</nav>
+
+<!-- Carousel Section -->
+<div id="newsCarousel" class="carousel slide carousel-fade" data-ride="carousel" style="margin-top:70px;">
+    <ol class="carousel-indicators">
+        <% for (let i = 0; i < Math.min(3, articles.length); i++) { %>
+            <li data-target="#newsCarousel" data-slide-to="<%= i %>" class="<%= i === 0 ? 'active' : '' %>"></li>
+        <% } %>
+    </ol>
+    <div class="carousel-inner">
+        <% for (let i = 0; i < Math.min(3, articles.length); i++) {
+            const article = articles[i];
+        %>
+        <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+            <img class="d-block w-100" src="<%= article.urlToImage ? article.urlToImage : '/images/default-news.jpg' %>" alt="Slide <%= i+1 %>" style="height: 450px; object-fit: cover;">
+            <div class="carousel-caption d-none d-md-block">
+                <h3><%= article.title %></h3>
+                <p><%= article.description ? article.description.substring(0, 120) + '...' : 'Read more at the source.' %></p>
+                <a href="<%= article.url %>" target="_blank" class="btn btn-danger">Read Full Article</a>
+            </div>
+        </div>
+        <% } %>
+    </div>
+    <a class="carousel-control-prev" href="#newsCarousel" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    </a>
+    <a class="carousel-control-next" href="#newsCarousel" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    </a>
+</div>
+
+<!-- Categories -->
+<div class="categories">
+    <a href="/category/trending"><button>Trending</button></a>
+    <a href="/category/technology"><button>Technology</button></a>
+    <a href="/category/sports"><button>Sports</button></a>
+    <a href="/category/health"><button>Health</button></a>
+    <a href="/category/business"><button>Business</button></a>
+</div>
+
+<!-- News Grid -->
+<div class="news-container">
+    <% if (articles && articles.length > 3) { %>
+        <% for (let i = 3; i < articles.length; i++) {
+            const article = articles[i];
+            if(article.url && article.title){
+        %>
+            <a href="<%= article.url %>" target="_blank" class="news-box Hover-effect">
+                <img src="<%= article.urlToImage ? article.urlToImage : '/images/default-news.jpg' %>" alt="News Image">
+                <h3><%= article.title %></h3>
+                <p><%= article.description ? article.description.substring(0, 150) + '...' : 'No description available.' %></p>
+            </a>
+        <% } } %>
+    <% } else { %>
+        <div class="alert alert-warning text-center" style="grid-column: span 3;">
+            No additional news available.
+        </div>
+    <% } %>
+</div>
+
+<footer>© 2025 NewsHive | Built for College Project</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+    $('.carousel').carousel({ interval: 5000 });
+</script>
+</body>
+</html>
